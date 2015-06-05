@@ -4,8 +4,11 @@ module.exports = function(req, res, next) {
   var txtcompl = req.body.text;
   var regex = /jiraticket\(.*?\)/g;
   var res = txtcompl.match(regex);
-  var fin = res.substring(11, res.length-1);
-  
+
+  var fin = "Can't read ticketnumber, please write like this: 'jiraticket(1234)'";
+  if(res != null) {
+      fin = res.substring(11, res.length-1);
+  }
 
   var botPayload = {
     text: 'Ticketnumber, 666! \n'+ res + '\n ' + fin
