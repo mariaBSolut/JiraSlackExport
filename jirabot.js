@@ -1,21 +1,14 @@
 module.exports = function(req, res, next) {
   var userName = req.body.user_name || 'slackbot';
 
-  var txtcompl = req.body.text;
-  var regex = /jiraticket\(.*?\)/g;
-  var resArr = txtcompl.match(regex);
-  var ticket = resArr[0];
-
+  var ticket = req.body.text.match(/jiraticket\(.*?\)/g);
   var fin = "Can't read ticketnumber, please write like this: 'jiraticket(1234)'";
-  console.log(ticket);
-  if(ticket) {
-      console.log("yay");
-      fin = ticket.substring(11, ticket.length-1);
-  }
 
-  var botPayload = {
-    text: 'Ticketnumber, 666! \n'+ ticket + '\n ' + fin
-  };
+  if(ticket && ticket[0] ) {
+      var ticketnum = ticket[0];
+      fin = ticketnum.substring(11, ticketnum.length-1);
+  }
+  var botPayload = { text: 'Ticketnumber: ' + parseInt(fin)+1 };
 
   //avoid infinite loop
   if(userName !== 'slackbot') { return res.status(200).json(botPayload); }
