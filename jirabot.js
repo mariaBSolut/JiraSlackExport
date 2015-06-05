@@ -6,7 +6,8 @@ module.exports = function(req, res, next) {
   var res = txtcompl.match(regex);
 
   var fin = "Can't read ticketnumber, please write like this: 'jiraticket(1234)'";
-  if(res != null) {
+  console.log(res);
+  if(res !== null && res !== "") {
       fin = res.substring(11, res.length-1);
   }
 
