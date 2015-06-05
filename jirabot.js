@@ -5,7 +5,7 @@ module.exports = function(req, res, next) {
     var fin = "Can't read ticketnumber, please write like this: 'jiraticket(1234)'";
 
     if(ticket && ticket[0] ) {
-        var ticketnum = ticket[0].substring(11, ticketnum.length-1);
+        var ticketnum = ticket[0].substring(11, ticket[0].length-1);
         fin = parseInt(fin) || fin;
     }
     var botPayload = isNumber(fin) ? { text: 'Ticketnumber: ' + fin+1  } : { text: fin};
