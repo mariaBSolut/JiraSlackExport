@@ -1,0 +1,16 @@
+{
+  "name": "JiraSlack",
+  "version": "1.0.0",
+  "description": "Webhook for showing jira ticket information in slack when mentioning ticket number",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "jira",
+    "slack",
+    "webhook"
+  ],
+  "author": "Maria Heblik",
+  "license": "ISC"
+}
