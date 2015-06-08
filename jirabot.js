@@ -8,7 +8,7 @@ module.exports = function(req, res, next) {
         var ticketnum = ticket[0].substring(11, ticket[0].length-1);
         fin = parseInt(ticketnum) || fin;
     }
-    var botPayload = isNumber(fin) ? { text: 'Ticketnumber: ' + fin+1  } : { text: fin};
+    var botPayload = isNumber(fin) ? { text: 'Ticketnumber: ' + (parseInt(fin)+1)  } : { text: fin};
 
     //avoid infinite loop
     if(userName !== 'slackbot') { return res.status(200).json(botPayload); }
