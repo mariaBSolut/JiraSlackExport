@@ -1,22 +1,17 @@
 module.exports = function(req, res, next) {
-    if(req.query.length <= 0 || !req.query.issueID) {
+    if(req.body.length <= 0 || !req.body.issue.id) {
       console.log('No post paramenters or missing issueID');
       return;
     }
-    console.log(req.query.issueTest);
-    console.log(req.query);
-
-    console.log("____BUH____");
-    console.log(req.body);
-    console.log(req.body.id);
-    console.log("____BUHEND____");
 
     var connection = require('../mysqlsetup').setup();
     connection.connect();
 
-    var tick = req.query;
+    var ticket = req.body.issue; //Helper variables
+    var project = req.body.issue.fields.project;
+
     //Check if IssueId already exists 
-    var selectQuery = "SELECT ticketID FROM ticket WHERE ticketID="+tick.issueID;
+    var selectQuery = "SELECT ticketID FROM ticket WHERE ticketID="+ticket.id;
     connection.query( selectQuery, function(err, data) {
         if(err) { console.log('error in db query'); throw err; }
 
@@ -25,18 +20,34 @@ module.exports = function(req, res, next) {
     });
 
     var selectCallback = function(isCreate) {
-        var baseUrl = req.query.baseUrl;
-        var url = req.query.baseUrl+'/projects/'+req.query.projectKey+'/issues/'+req.query.issueKey;
+        var baseUrl = ticket.self.match(/.*?(?=\/rest)/g);
+        var url = (baseUrl.length > 0) ? (baseUrl[0]+'/projects/'+project.key+'/issues/'+ticket.key) : "";
+        
+        //Build Query
         var strQuery = "";
         if(isCreate) 
-            strQuery = "INSERT INTO ticket(ticketID, ticketKey, projectKey, ticketUrl) VALUES("+tick.issueID+",'"+tick.issueKey+"','"+tick.projectKey+"','"+url+"')";
+            strQuery = "INSERT INTO ticket(ticketID, ticketKey, projectKey, projectName, ticketUrl, ticketDescription) " +
+              "VALUES(" + 
+              ticket.id+",'" + 
+              ticket.key+"','" + 
+              project.key+"','" + 
+              project.name+"','" + 
+              url+"','" + 
+              ticket.fields.description+"')";
         else
-            strQuery = "UPDATE ticket SET ticketID="+tick.issueID+", ticketKey='"+tick.issueKey+"', projectKey='"+tick.projectKey+"', ticketUrl='"+url+"' WHERE ticketID="+tick.issueID;
+            strQuery = "UPDATE ticket SET " +
+              "ticketID="+ticket.id + ", " +
+              "ticketKey='"+ticket.key + "', " +
+              "projectKey='"+project.key+"', " +
+              "projectName='"+project.name+"', " +
+              "ticketUrl='"+url+"', " +
+              "ticketDescription='"+ticket.fields.description+"' " +
+              "WHERE ticketID="+ticket.id;
         
         //Inser or Update Issue
         connection.query( strQuery, function(err, data) {
             if(err) { console.log('error in db query'); throw err; }
-            console.log("Issue Handled");
+            isCreate ? console.log("Issue Inserted") : console.log("Issue Updated");
             connection.end();
         });
     };
